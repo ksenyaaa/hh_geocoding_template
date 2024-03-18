@@ -11,15 +11,15 @@ class MemorizedTreeGeocoder(Geocoder):
         else:
             self.__data = data
 
-    """
-        TODO:
-        Сделать функцию перебора дерева:
-        - Для каждого узла сохранять в словарь адресов
-    """
+    def tree(self, node: TreeNode, address: str):
+        self.dict[node.id] = address
+        for areas in node.areas:
+            self.tree(areas, address + ", " + areas.name)
 
     def _apply_geocoding(self, area_id: str) -> str:
-        """
-            TODO:
-            - Возвращать данные из словаря с адресами
-        """
-        raise NotImplementedError()
+        if not self.dict:
+            for node in self.__data:
+                self.tree(node, node.name)
+
+        return self.dict.get(area_id, "")
+
